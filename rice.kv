@@ -27,10 +27,19 @@
 <Bbar@Button>:
 	text: "I'm a button!"
 
+<ButtonBar>:
+	size_hint_y: 0.05
+
+	Bbar:
+
+	Bbar:
+
+	Bbar:
+
 <SwitchScreen>:
 #	size_hint_y: 0.08
 	accordion: acco
-	scrollinfo: info
+	infos: info
 
 	canvas:
 		Color:
@@ -53,20 +62,7 @@
 				size: self.size
 				pos: self.pos
 
-	BoxLayout:
-		orientation: "vertical"
-#		on_: viewitem()
-
-		BoxLayout:
-			layout: 'vertical'
-			size_hint_y: 1
-			id: info
-
-		ButtonBar:
-			size_hint_y: 0.05
-				
-			Bbar:
-
-			Bbar:
-
-			Bbar:
+	InfoScreen:
+		id: info
+#		size_hint_x: 0.69
+#		orientation: "vertical"

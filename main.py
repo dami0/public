@@ -8,6 +8,7 @@ from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.stacklayout import StackLayout
 from kivy.uix.accordion import Accordion, AccordionItem
 from kivy.uix.textinput import TextInput
+from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.properties import StringProperty, ObjectProperty
@@ -34,10 +35,10 @@ class Prompt(Label):
 
 
 class SwitchScreen(BoxLayout):
-    global file
-    inst = file
+#    global file
+#    inst = file
     accordion = ObjectProperty(None)
-    scrollinfo = ObjectProperty(None)
+    infos = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super(SwitchScreen, self).__init__(**kwargs)
@@ -45,35 +46,45 @@ class SwitchScreen(BoxLayout):
         self.create()
 #        self.scrollinfo.add_widget(InfoScreen(self.inst.listCategories()[0]))
 
-    def viewitem(self, object, value):
-        self.scrollinfo.clear_widgets()
-        self.scrollinfo.add_widget(InfoScreen(value))
+    def viewitem(self, object, text):
+        self.remove_widget(self.infos)
+        self.infos = InfoScreen(text)
+        self.add_widget(self.infos)
 
     def create(self):
         self.accordion.bind(selected=self.viewitem)
 
 
-class InfoScreen(StackLayout):
+class InfoScreen(BoxLayout):
 
-    def __init__(self, value, **kwargs):
+    def __init__(self, value = "", **kwargs):
         super(InfoScreen, self).__init__(**kwargs)
-        self.orientation = 'tb-lr'
+        if not value: return
+        self.orientation = "vertical"
+        self.add_widget(Label(text = value, font_size = "28sp",
+            size_hint_y = 0.05))
+
         global file
         inst = file
-#        self.padding = [0.9, 0.2]
-
-        self.add_widget(Label(text = value, font_size = "28sp", size_hint_y = 0.1))
-#        for sub in inst.listInsideCategories(value):
-#            l = (Label(text = sub)) #, halign="center", size_hint=(None, None)))
-#            l.bind(texture_size=l.setter('size'))
-#            self.add_widget(l)
-
         inf = inst.getInfo(value)
-#        l2= (Label(text = inf, size_hint = (None, 0.1), halign = 'left',
-#            size_y = text_size[1]))
-#        l2.bind(texture_size=l2.setter('size'))
-        l2 = TextInput(text = inf, background_color = (0.15, 0.15, 0.15, 1), size_hint_y = 0.9, foreground_color = (1, 1, 1, 1))
-        self.add_widget(l2)
+        txts = TextInput(text = inf, background_color = (0.15, 0.15, 0.15, 1),
+            foreground_color = (1, 1, 1, 1), multiline = True, readonly = False,
+            size_hint = (1.0, None))
+        txts.bind(minimum_height=txts.setter('height'))
+        scroll = ScrollView(size_hint = (None, None),
+                size = (400, 600))
+        scroll.add_widget(txts)
+        self.add_widget(scroll)
+
+        self.add_widget(ButtonBar())
+
+
+class Scroller(ScrollView):
+
+    def __init__(self, **kwargs):
+        super(Scroller, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (400, 400)
 
 
 class AccordionThing(Accordion):
@@ -98,7 +109,8 @@ class AccordionThing(Accordion):
             box = BoxLayout(orientation = 'vertical')
             subs = inst.listInsideCategories(cat)
             for sub in subs:
-                butt = Button(text = sub, background_color = [0.35, 0.35, 0.35, 1])
+                butt = Button(text = sub, background_color = [0.35, 0.35, 0.35,
+                    1])
                 butt.bind(on_press = self.switch)
                 box.add_widget(butt)
             blades[-1].add_widget(box)
