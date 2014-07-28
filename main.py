@@ -63,6 +63,8 @@ class InfoScreen(BoxLayout):
         self.orientation = "vertical"
         self.add_widget(Label(text = value, font_size = "28sp",
             size_hint_y = 0.05))
+        width = self.width
+        height = self.height
 
         global file
         inst = file
@@ -71,8 +73,8 @@ class InfoScreen(BoxLayout):
             foreground_color = (1, 1, 1, 1), multiline = True, readonly = False,
             size_hint = (1.0, None))
         txts.bind(minimum_height=txts.setter('height'))
-        scroll = ScrollView(size_hint = (None, None),
-                size = (400, 600))
+        scroll = ScrollView(size_hint = (1, 1),
+                size = (width, height*0.9))
         scroll.add_widget(txts)
         self.add_widget(scroll)
 
