@@ -61,10 +61,10 @@ class InfoScreen(BoxLayout):
         super(InfoScreen, self).__init__(**kwargs)
         if not value: return
         self.orientation = "vertical"
-        self.add_widget(Label(text = value, font_size = "28sp",
-            size_hint_y = 0.05))
         width = self.width
         height = self.height
+
+        self.add_widget(HeadInfo(value))
 
         global file
         inst = file
@@ -81,12 +81,15 @@ class InfoScreen(BoxLayout):
         self.add_widget(ButtonBar())
 
 
-class Scroller(ScrollView):
+class HeadInfo(Widget):
+    header = ObjectProperty(None)
 
-    def __init__(self, **kwargs):
-        super(Scroller, self).__init__(**kwargs)
-        self.size_hint = (None, None)
-        self.size = (400, 400)
+    def __init__(self, value, **kwargs):
+        super(HeadInfo, self).__init__(**kwargs)
+        self.header.text = value
+#        self.add_widget(Label(text = value, font_size = "28sp",
+#            size_hint_y = 0.05))
+        
 
 
 class AccordionThing(Accordion):
@@ -99,7 +102,6 @@ class AccordionThing(Accordion):
 
     def switch(self, object):
         self.selected = object.text
-#            print(self.selected)
 
     def draw(self):
         global file
@@ -107,7 +109,6 @@ class AccordionThing(Accordion):
         blades = []
         for cat in inst.listCategories():
             blades.append(AccordionItem(title = cat))
-#            blades[-1].bind(collapse = self.switch)
             box = BoxLayout(orientation = 'vertical')
             subs = inst.listInsideCategories(cat)
             for sub in subs:
