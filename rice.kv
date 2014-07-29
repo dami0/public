@@ -19,7 +19,7 @@
 	Label:
 #		size_hint_x: 0.05
 		text: "Rice Keep"
-		font_size: '18sp'
+		font_size: '28sp'
 		halign: 'center'
 		size: self.width, self.height
 
@@ -49,10 +49,10 @@
 
 	canvas:
 		Color:
-			rgba: 0.15, 0.15, 0.15, 1
+			rgba: 0.15, 0.15, 0.15, 0
 		Rectangle:
-			size: root.width, root.height
-			pos: self.x, root.top - self.height
+			size: root.width, root.height*0.05
+			pos: self.x, root.center_y
 
 	AccordionThing:
 		id: acco
@@ -80,9 +80,16 @@
 	Label:
 		id: head
 #		size_hint_y: 0.05
-		pos: root.center_x - self.width/2, root.y - self.height/4
-		font_size: "28sp"
+		font_size: "20sp"
+		size: root.width/2, root.height
+		pos: root.center_x - self.width/2, root.center_y - root.height/2
 
 	CheckBox:
-		pos: root.x, root.y - self.height/4
-		size: root.size
+		size: root.width/2, root.height
+		pos: root.width - self.width/6, root.center_y - self.height/2
+
+	Label:
+		text: "INFO"
+		font_size: "20sp"
+		size: root.width/2, root.height
+		pos: root.width, root.center_y - self.height/2

@@ -108,12 +108,12 @@ class AccordionThing(Accordion):
         inst = file
         blades = []
         for cat in inst.listCategories():
-            blades.append(AccordionItem(title = cat))
+            blades.append(AccordionItem(title = cat, font_size = "20sp"))
             box = BoxLayout(orientation = 'vertical')
             subs = inst.listInsideCategories(cat)
             for sub in subs:
                 butt = Button(text = sub, background_color = [0.35, 0.35, 0.35,
-                    1])
+                    1], font_size = "16sp")
                 butt.bind(on_press = self.switch)
                 box.add_widget(butt)
             blades[-1].add_widget(box)
