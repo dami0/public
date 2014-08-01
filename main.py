@@ -9,6 +9,10 @@ from kivy.uix.stacklayout import StackLayout
 from kivy.uix.accordion import Accordion, AccordionItem
 from kivy.uix.textinput import TextInput
 from kivy.uix.scrollview import ScrollView
+from kivy.uix.floatlayout import FloatLayout
+from kivy.factory import Factory
+from kivy.uix.popup import Popup
+
 from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.properties import StringProperty, ObjectProperty
@@ -16,9 +20,15 @@ from getpass import getuser
 from socket import gethostname
 import JsonInfoReader, State, Outputer
 import time
+import os
 
 
 file = JsonInfoReader.JsonInfoReader("info.json")
+state = State.State()
+
+class LoadDialog(FloatLayout):
+    load = ObjectProperty(None)
+    cancel = ObjectProperty(None)
 
 class TitleBar(BoxLayout):
 
@@ -70,13 +80,18 @@ class InfoScreen(BoxLayout):
         inst = file
         inf = inst.getInfo(value)
         txts = TextInput(text = inf, background_color = (0.15, 0.15, 0.15, 1),
-            foreground_color = (1, 1, 1, 1), multiline = True, readonly = True,
+            foreground_color = (1, 1, 1, 1), multiline = True, readonly = False,
             size_hint = (1.0, None))
         txts.bind(minimum_height=txts.setter('height'))
         scroll = ScrollView(size_hint = (1, 1),
                 size = (width, height*0.9))
         scroll.add_widget(txts)
         self.add_widget(scroll)
+        comments = TextInput(multiline=True, foreground_color = (1, 1, 1, 1), 
+            size_hint=(1.0,None), background_color = (0.15, 0.15, 0.15))
+        if value in state.comments.keys():
+            comments.text = state.comments[value]
+        self.add_widget(comments)
 
         self.add_widget(ButtonBar())
 
@@ -127,6 +142,19 @@ class ButtonBar(BoxLayout):
     def __init__(self, **kwargs):
         super(ButtonBar, self).__init__(**kwargs)
         self.orientation = 'horizontal'
+
+    def showImport(self):
+        content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
+        self._popup = Popup(title="Load file", content=content, size_hint=(0.9,
+            0.9))
+        self._popup.open()
+
+    def load(self, path, filename):
+        state.load(os.path.join(path,filename[0]))
+        self.dismiss_popup()
+
+    def dismiss_popup(self):
+        self._popup.dismiss()
 
 
 class MainScreen(BoxLayout):
