@@ -18,7 +18,7 @@ import JsonInfoReader, State, Outputer
 import time
 
 
-file = JsonInfoReader.JsonInfoReader("info.json", None)
+file = JsonInfoReader.JsonInfoReader("info.json")
 
 class TitleBar(BoxLayout):
 
@@ -70,7 +70,7 @@ class InfoScreen(BoxLayout):
         inst = file
         inf = inst.getInfo(value)
         txts = TextInput(text = inf, background_color = (0.15, 0.15, 0.15, 1),
-            foreground_color = (1, 1, 1, 1), multiline = True, readonly = False,
+            foreground_color = (1, 1, 1, 1), multiline = True, readonly = True,
             size_hint = (1.0, None))
         txts.bind(minimum_height=txts.setter('height'))
         scroll = ScrollView(size_hint = (1, 1),
