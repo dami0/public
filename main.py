@@ -80,18 +80,24 @@ class InfoScreen(BoxLayout):
         inst = file
         inf = inst.getInfo(value)
         txts = TextInput(text = inf, background_color = (0.15, 0.15, 0.15, 1),
-            foreground_color = (1, 1, 1, 1), multiline = True, readonly = False,
+            foreground_color = (1, 1, 1, 1), multiline = True, readonly = True,
             size_hint = (1.0, None))
         txts.bind(minimum_height=txts.setter('height'))
-        scroll = ScrollView(size_hint = (1, 1),
-                size = (width, height*0.9))
+        scroll = ScrollView(size_hint = (1, 0.8),
+                size = (width, height))
         scroll.add_widget(txts)
         self.add_widget(scroll)
+        scroll2 = ScrollView(size_hint = (1, 0.2),
+                size = (width, height))
         comments = TextInput(multiline=True, foreground_color = (1, 1, 1, 1), 
-            size_hint=(1.0,None), background_color = (0.15, 0.15, 0.15))
+            size_hint = (1.0, None), background_color = (0.15, 0.15, 0.15))
+        comments.bind(minimum_height=comments.setter('height'))
         if value in state.comments.keys():
             comments.text = state.comments[value]
-        self.add_widget(comments)
+        else: comments.text = "Put some text here, bruh."
+        scroll2.add_widget(comments)
+        self.add_widget(scroll2)
+#        self.add_widget(comments)
 
         self.add_widget(ButtonBar())
 
