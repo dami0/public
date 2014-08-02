@@ -83,10 +83,11 @@ class InfoScreen(BoxLayout):
             foreground_color = (1, 1, 1, 1), multiline = True, readonly = True,
             size_hint = (1.0, None))
         txts.bind(minimum_height=txts.setter('height'))
-        scroll = ScrollView(size_hint = (1, 0.8),
+        scroll = ScrollView(size_hint = (1, 1),
                 size = (width, height))
         scroll.add_widget(txts)
         self.add_widget(scroll)
+        self.add_widget(Label(text = "Comments", size_hint_y = 0.05))
         scroll2 = ScrollView(size_hint = (1, 0.2),
                 size = (width, height))
         comments = TextInput(multiline=True, foreground_color = (1, 1, 1, 1), 
