@@ -7,10 +7,11 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"time"
+	"math"
+	"strings"
+	"strconv"
 	"github.com/thoj/go-ircevent"
-	"github.com/ndyakov/go-lastfm"
 )
 var (
 	server			string	= "irc.iotek.org:6667"
@@ -23,8 +24,7 @@ var (
 	cmdPrefix		string	= "."
 	s_nick			string  = ""
 	s_cmd			string  = ""
-	nickmap				= make(map[string]string)
-	lfm				= lastfm.New("", "")
+	fappers				= make(map[string][]string)
 )
 
 
@@ -44,16 +44,32 @@ func handleCmd (s_nick string, s_cmd []string, ircobj *irc.Connection) {
 	cmdArgs	:= s_cmd[1:]
 	var msg string = ""
 
-	fmt.Println(cmd)
-	fmt.Println(cmdArgs)
+//	fmt.Println(cmd)
+//	fmt.Println(cmdArgs)
 //	fmt.Println(len(cmd))
 //	fmt.Println(len(cmdArgs))
 
-//	if len(cmd) < 2 { return }
-//	switch {
-//	case cmd[:2] == "set":
-//	}
-//	if msg != "" { ircobj.Privmsg(channel, msg) }
+	if len(cmdArgs) < 1 { return }
+	switch {
+	case cmd == "set":
+		if len(cmdArgs) < 4 { return }
+		fappers[cmdArgs[0]] = cmdArgs[1:4]
+		fmt.Println(fappers)
+	case cmd == "len":
+		date := fappers[cmdArgs[0]]
+		if date == nil { return }
+		year, _ := strconv.ParseInt(date[2], 10, 16)
+		temp, _ := strconv.ParseInt(date[1], 10, 8)
+		month := time.Month(temp)
+		day, _ := strconv.ParseInt(date[0], 10, 8)
+		tStart := time.Date(int(year), month, int(day), 0, 0, 0, 0,
+			time.UTC)
+		dt := int64(math.Floor(time.Since(tStart).Hours()/24))
+		msg = strconv.FormatInt(dt, 10)
+	case cmd == "del":
+		delete(fappers, cmdArgs[0])
+	}
+	if msg != "" { ircobj.Privmsg(channel, msg) }
 }
 
 //	here be dragons
