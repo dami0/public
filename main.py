@@ -225,16 +225,19 @@ class ButtonBar(BoxLayout):
         self._popup.open()
 
     def save(self, path, filename):
-        if self.outputing==True:
-            selected = ""
-            for choice in self.allChoices:
-                if choice.state == 'down':
-                    selected = choice.text
-                    break
-            out.output(selected,state,file,os.path.join(path,filename))
-        else:
-            state.save(os.path.join(path, filename))
-        self.dismiss_popup()
+        try:
+            if self.outputing==True:
+                selected = ""
+                for choice in self.allChoices:
+                    if choice.state == 'down':
+                        selected = choice.text
+                        break
+                out.output(selected,state,file,os.path.join(path,filename))
+            else:
+                state.save(os.path.join(path, filename))
+            self.dismiss_popup()
+        except Exception:
+            self.error("Could not save to file")
 
     def showHelp(self):
         content = BoxLayout(orientation = 'vertical')
@@ -246,17 +249,19 @@ class ButtonBar(BoxLayout):
         self._popup.open()
 
     def showUpdate(self):
-        status = file.update()
-        content = BoxLayout(orientation = 'vertical')
-        if status == 0:
-            content.add_widget(Label(text=UPDATE_SUCC_TEXT))
-        elif status == -1:
-            content.add_widget(Label(text=UPDATE_UNSUCC_TEXT))
-        else :
-            content.add_widget(Label(text=NO_UPDATE_TEXT))
-        self._popup = Popup(title='Update', content=content,size_hint=(0.6, 0.6))
-        self._popup.open()
-
+        try:
+            status = file.update()
+            content = BoxLayout(orientation = 'vertical')
+            if status == 0:
+                content.add_widget(Label(text=UPDATE_SUCC_TEXT))
+            elif status == -1:
+                content.add_widget(Label(text=UPDATE_UNSUCC_TEXT))
+            else :
+                content.add_widget(Label(text=NO_UPDATE_TEXT))
+            self._popup = Popup(title='Update', content=content,size_hint=(0.6, 0.6))
+            self._popup.open()
+        except Exception:
+            self.error("Could not perform update")
 
     def showOutput(self):
         content = BoxLayout(orientation='vertical')
@@ -296,14 +301,27 @@ class ButtonBar(BoxLayout):
         self.showExport()
 
     def load(self, path, filename):
-        state.load(os.path.join(path,filename[0]))
-        #reset the buttons
-        for subButton in subButtons.values():
-            subButton.color = [1.0,1.0,1.0,1]
-        for select in state.selected:
-            subButtons[select].color =  [ 0.306, 0.464, 0.80, 1]
+        try:
+            state.load(os.path.join(path,filename[0]))
+            #reset the buttons
+            for subButton in subButtons.values():
+                subButton.color = [1.0,1.0,1.0,1]
+            for select in state.selected:
+                subButtons[select].color =  [ 0.306, 0.464, 0.80, 1]
+            self.dismiss_popup()
+        except Exception:
+            self.error("Could not load config file")
 
+    def error(self, message):
         self.dismiss_popup()
+        content = BoxLayout(orientation = 'vertical')
+        content.add_widget(Label(text=message))
+        closeButton  = Button(text='OK',size_hint_y = 0.15)
+        content.add_widget(closeButton)
+        self._popup = Popup(title='Error', content=content,size_hint=(0.5, 0.5))
+        closeButton.bind(on_press=self._popup.dismiss)
+        self._popup.open()
+
 
     def dismiss_popup(self):
         self.outputing = False
