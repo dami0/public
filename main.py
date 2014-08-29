@@ -186,18 +186,22 @@ class AccordionThing(Accordion):
     def draw(self):
         global file
         inst = file
+
         for cat in inst.listCategories():
             self.blades.append(AccordionItem(title = cat, font_size = "20sp"))
             box = BoxLayout(orientation = 'vertical')
             subs = inst.listInsideCategories(cat)
+
             for sub in subs:
                 butt = Button(text = sub, background_color = [0.35, 0.35, 0.35,
-                    1], font_size = "16sp")
+                    1], font_size = "16sp", size_hint_y = 0.1)
                 butt.bind(on_press = self.switch)
                 subButtons[sub] = butt
                 box.add_widget(butt)
+
             self.blades[-1].add_widget(box)
             self.add_widget(self.blades[-1])
+
         self.blades[-1].collapse = True
         self.blades[0].collapse = False
 
@@ -206,13 +210,12 @@ class ButtonBar(BoxLayout):
 
     def __init__(self, **kwargs):
         super(ButtonBar, self).__init__(**kwargs)
-        self.orientation = 'horizontal'
         self.outputing   = False
 
     def showImport(self):
         content = LoadDialog(load=self.load, cancel=self.dismiss_popup)
-        self._popup = Popup(title="Import config", content=content, size_hint=(0.9,
-            0.9))
+        self._popup = Popup(title="Import config", content=content,
+                size_hint=(0.9, 0.9))
         self._popup.open()
 
     def showExport(self):
