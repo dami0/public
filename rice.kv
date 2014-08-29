@@ -1,6 +1,7 @@
 #:kivy 1.8.0
 
 <TitleBar>:
+	orientation: "horizontal"
 	size_hint_y: 0.05
 	canvas:
 		Color:
@@ -70,36 +71,32 @@
 				text: "Save"
 				on_release: root.save(filechooser.path, text_input.text)
 
-<Bbar@Button>:
-	text: "I'm a button!"
-
 <ButtonBar>:
 	size_hint_y: 0.05
 
-	Bbar:
+	Button:
 		text: "Import"
 		on_release:  root.showImport()
 
-	Bbar:
+	Button:
 		text: "Export"
 		on_release: root.showExport()
 
-	Bbar:
+	Button:
 		text: "Output"
 		on_release: root.showOutput()
 
-	Bbar:
+	Button:
 		text: "Update"
 		on_release: root.showUpdate()
 
-	Bbar:
+	Button:
 		text: "Help"
 		on_release: root.showHelp()
 
 <SwitchScreen>:
-#	size_hint_y: 0.08
+	orientation: "horizontal"
 	accordion: acco
-	infos: info
 
 	canvas:
 		Color:
@@ -121,11 +118,6 @@
 			Rectangle:
 				size: self.size
 				pos: self.pos
-
-	InfoScreen:
-		id: info
-#		size_hint_x: 0.69
-#		orientation: "vertical"
 
 <HeadInfo>:
 	header: head
@@ -149,3 +141,19 @@
 		font_size: "20sp"
 		size: root.width/2, root.height
 		pos: root.width, root.center_y - self.height/2
+
+#<InfoScreen>: 
+#	orientation: "vertical"
+#	txts: txt
+#
+#        ScrollView:
+#		size_hint: 1, 1
+#                size: width, height
+# 
+#		TextInput:
+#			id: txt
+#			background_color: 0.15, 0.15, 0.15, 1
+#		        foreground_color: 1, 1, 1, 1
+#			multiline: True
+#			readonly: True
+#		        size_hint: 1.0, None

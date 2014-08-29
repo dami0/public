@@ -58,7 +58,6 @@ class TitleBar(BoxLayout):
 
     def __init__(self, **kwargs):
         super(TitleBar, self).__init__(**kwargs)
-        self.orientation = 'horizontal'
 
 
 class Prompt(Label):
@@ -69,33 +68,28 @@ class Prompt(Label):
 
 
 class SwitchScreen(BoxLayout):
-#    global file
-#    inst = file
     accordion = ObjectProperty(None)
-    infos = ObjectProperty(None)
 
     def __init__(self, **kwargs):
         super(SwitchScreen, self).__init__(**kwargs)
-        self.orientation = 'horizontal'
-        self.create()
-#        self.scrollinfo.add_widget(InfoScreen(self.inst.listCategories()[0]))
+        self.accordion.bind(selected=self.viewitem)
+        self.infos = InfoScreen(DEFAULT_ON_OPEN)
+        self.add_widget(self.infos)
 
     def viewitem(self, object, text):
         self.remove_widget(self.infos)
         self.infos = InfoScreen(text)
         self.add_widget(self.infos)
 
-    def create(self):
-        self.accordion.bind(selected=self.viewitem)
-
 
 class InfoScreen(BoxLayout):
+#    txts = ObjectProperty(None)
 
     def __init__(self, value = "", **kwargs):
         super(InfoScreen, self).__init__(**kwargs)
         self.value = value
-        if not self.value: return
         self.orientation = "vertical"
+        if not self.value: return
         width = self.width
         height = self.height
 
@@ -103,16 +97,18 @@ class InfoScreen(BoxLayout):
 
         global file
         inst = file
+
         inf = inst.getInfo(self.value)
         txts = TextInput(text = inf, background_color = (0.15, 0.15, 0.15, 1),
             foreground_color = (1, 1, 1, 1), multiline = True, readonly = True,
             size_hint = (1.0, None))
         txts.bind(minimum_height=txts.setter('height'))
+        txts.text = inf
         scroll = ScrollView(size_hint = (1, 1),
                 size = (width, height))
         scroll.add_widget(txts)
         self.add_widget(scroll)
-        #self.add_widget(Label(text = "Comments", size_hint_y = 0.05))
+
         scroll2 = ScrollView(size_hint = (1, 0.2),
                 size = (width, height))
         comments = TextInput(multiline=True, foreground_color = [0.9, 0.9, 0.9, 1], 
