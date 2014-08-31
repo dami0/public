@@ -1,7 +1,13 @@
-/* 
- * No idea what the original license is, but I'm taking the liberty to stick
- * ISC on here, found in the same directory as this file, as a file named
- * "LICENSE".
+/*
+ * This is a simple tool to give a range of addresses as well as the validity of
+ * a network mask (lax, post-CIDR shennanigans) from any of binary, decimal or
+ * CIDR notation.
+ *
+ * ISC masterrace - look at ./LICENSE
+ *
+ * dami0 (at) iotek (dot) com
+ * IOTek represent
+ * Copyright 2014, to infinity and beyond to the other end of the scale
  */
 
 #include <stdio.h>
@@ -10,6 +16,7 @@
 #include <math.h>
 
 int to10(char *bin, size_t siz) {
+
 	int i, j;
 	int sum = 0;
 
@@ -21,6 +28,7 @@ int to10(char *bin, size_t siz) {
 }
 
 int to2(int n) {
+
 	int i, j;
 	int d;
 	int siz;
@@ -46,9 +54,46 @@ int to2(int n) {
 	free(tmp);
 }
 
+int dec(char *nm) {
+
+	int out[4];
+	int i, j, k;
+	int dels[5];
+	char tmp[3] = "000";
+
+	dels[0] = -1;
+	for (i = 0, j = 1; i < 18; i++) {
+		if (nm[i] == '.') {
+			dels[j++] = i;
+			if ((dels[j-1] - dels[j-2]) > 4) return -1;
+		}
+		if (nm[i] == '\0') dels[j] = i;
+//		if ((dels[j] - dels[j-1]) > 5) { printf("kakakak"); return -1; }
+	}
+	printf("%i.%i.%i.%i 3\n", dels[0], dels[1], dels[2], dels[3]);
+
+	for (i = 0; i < 4; i++) {
+		for (j = 0; j < 3; j++) tmp[j] = '0';
+		for (k = 2, j = dels[i+1] - 1; j > dels[i]; j--, k--) {
+			tmp[k] = nm[j];
+		}
+		printf("%s 2\n", tmp);
+		out[i] = atoi(tmp);
+	}
+
+//	printf("%i.%i.%i.%i\n", dels[0], dels[1], dels[2], dels[3]);
+
+	return 0;
+}
+
 int main(int argc, char **argv) {
-	
-	char nmask[16];
+
+	int i;
+	char *nmask;
+
+	nmask = argv[1];
+	printf("%s 1\n", nmask);
+	dec(nmask);
 
 	return 0;
 }
