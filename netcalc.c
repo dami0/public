@@ -54,12 +54,28 @@ int to2(int n) {
 	free(tmp);
 }
 
+int bin(char *nm) {
+
+	int i;
+	int out;
+
+	for (i = 0, out = 0; i < 36; i++) {
+		if (nm[i] == '1') out++;
+		if (nm[i+1] == '1' && nm[i] == '0') {
+			puts("Invalid netmask; wrong values");
+			return -1;
+		}
+	}
+
+	return out;
+}
+
 int dec(char *nm) {
 
 	int out[4];
 	int i, j, k;
 	int dels[5];
-	char tmp[3] = "000";
+	char tmp[4] = "000";
 
 	dels[0] = -1;
 	for (i = 0, j = 1; i < 18; i++) {
@@ -68,32 +84,33 @@ int dec(char *nm) {
 			if ((dels[j-1] - dels[j-2]) > 4) return -1;
 		}
 		if (nm[i] == '\0') dels[j] = i;
-//		if ((dels[j] - dels[j-1]) > 5) { printf("kakakak"); return -1; }
 	}
-	printf("%i.%i.%i.%i 3\n", dels[0], dels[1], dels[2], dels[3]);
 
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 3; j++) tmp[j] = '0';
 		for (k = 2, j = dels[i+1] - 1; j > dels[i]; j--, k--) {
 			tmp[k] = nm[j];
 		}
-		printf("%s 2\n", tmp);
 		out[i] = atoi(tmp);
 	}
 
-//	printf("%i.%i.%i.%i\n", dels[0], dels[1], dels[2], dels[3]);
+	sprintf(nm, "%08i.%08i.%08i.%08i", to2(out[0]), to2(out[1]), to2(out[2])
+			, to2(out[3]));
 
-	return 0;
+	return bin(nm);
 }
 
 int main(int argc, char **argv) {
 
 	int i;
+	int cidr = 0;
 	char *nmask;
 
 	nmask = argv[1];
-	printf("%s 1\n", nmask);
-	dec(nmask);
+	cidr = dec(nmask);
+	printf("%i\n", cidr);
 
+	if (cidr < 1) { return -1;
+	} else if (cidr == 0) puts("Nothing happened.");
 	return 0;
 }
