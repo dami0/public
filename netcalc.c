@@ -58,15 +58,25 @@ int bin(char *nm) {
 
 	int i;
 	int out;
+	int cnt;
 
-	for (i = 0, out = 0; i < 36; i++) {
-		if (nm[i] == '\0') break;
+	for (i = 0, out = 0, cnt = 0; i < 36; i++) {
+		if (nm[i] == '\0') { cnt++; break; }
+		if (nm[i] != '1' && nm[i] != '0' && nm[i] != '.') {
+			puts("Stop right there criminal scum!");
+			return -1;
+		}
+		if (nm[i] == '.') cnt++;
 		if (nm[i] == '1') out++;
 		if ((nm[i+1] == '1' && nm[i] == '.' && nm[i-1] == '0') ||
 		(nm[i+1] == '1' && nm[i] == '0')) {
 			puts("Invalid netmask; a one followed a zero");
 			return -1;
 		}
+	}
+	if (cnt != 4) {
+		puts("Invalid netmask; not enough values");
+		return -1;
 	}
 
 	return out;
