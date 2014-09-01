@@ -60,6 +60,7 @@ int bin(char *nm) {
 	int out;
 
 	for (i = 0, out = 0; i < 36; i++) {
+		if (nm[i] == '\0') break;
 		if (nm[i] == '1') out++;
 		if ((nm[i+1] == '1' && nm[i] == '.' && nm[i-1] == '0') ||
 		(nm[i+1] == '1' && nm[i] == '0')) {
@@ -104,6 +105,7 @@ int dec(char *nm) {
 
 	sprintf(nm, "%08i.%08i.%08i.%08i", to2(out[0]), to2(out[1]), to2(out[2])
 			, to2(out[3]));
+	puts(nm);
 
 	return bin(nm);
 }
@@ -111,11 +113,33 @@ int dec(char *nm) {
 int main(int argc, char **argv) {
 
 	int i;
-	int cidr = 0;
+	char *mode;
 	char *nmask;
+	int cidr = 0;
 
-	nmask = argv[1];
-	cidr = dec(nmask);
+	mode = argv[1];
+	nmask = argv[2];
+
+	if (mode[0] != '-') return -1;
+	if (mode[1] == 'b') { i = 1;
+	} else if (mode[1] == 'd') { i = 2;
+	} else if (mode[1] == 'c') { i = 3; }
+
+	switch (i) {
+		case 1:
+			cidr = bin(nmask);
+			break;
+		case 2:
+			cidr = dec(nmask);
+			break;
+		case 3:
+			cidr = atoi(nmask);
+			break;
+		default:
+			cidr = 0;
+			break;
+	}
+
 	if (cidr > 0) printf("%i\n", cidr);
 
 	if (cidr < 1) { return -1;
