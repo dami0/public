@@ -61,8 +61,9 @@ int bin(char *nm) {
 
 	for (i = 0, out = 0; i < 36; i++) {
 		if (nm[i] == '1') out++;
-		if (nm[i+1] == '1' && nm[i] == '0') {
-			puts("Invalid netmask; wrong values");
+		if ((nm[i+1] == '1' && nm[i] == '.' && nm[i-1] == '0') ||
+		(nm[i+1] == '1' && nm[i] == '0')) {
+			puts("Invalid netmask; a one followed a zero");
 			return -1;
 		}
 	}
@@ -81,9 +82,12 @@ int dec(char *nm) {
 	for (i = 0, j = 1; i < 18; i++) {
 		if (nm[i] == '.') {
 			dels[j++] = i;
-			if ((dels[j-1] - dels[j-2]) > 4) return -1;
 		}
 		if (nm[i] == '\0') dels[j] = i;
+	}
+	if (j != 4) {
+		puts("Invalid netmask; not enough values");
+		return -1;
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -92,6 +96,10 @@ int dec(char *nm) {
 			tmp[k] = nm[j];
 		}
 		out[i] = atoi(tmp);
+		if (out[i] > 255 || out[i] < 0) {
+			puts("Invalid netmask; value(s) outside of 0-255");
+			return -2;
+		}
 	}
 
 	sprintf(nm, "%08i.%08i.%08i.%08i", to2(out[0]), to2(out[1]), to2(out[2])
@@ -108,7 +116,7 @@ int main(int argc, char **argv) {
 
 	nmask = argv[1];
 	cidr = dec(nmask);
-	printf("%i\n", cidr);
+	if (cidr > 0) printf("%i\n", cidr);
 
 	if (cidr < 1) { return -1;
 	} else if (cidr == 0) puts("Nothing happened.");
