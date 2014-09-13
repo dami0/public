@@ -1,7 +1,7 @@
 /*
- * This is a simple tool to give a range of addresses as well as the validity of
- * a network mask (lax, post-CIDR shennanigans) from any of binary, decimal or
- * CIDR notation.
+ * This is a simple tool to give a range of addresses as well as the validity
+ * of a network mask (lax, post-CIDR shennanigans) from any of binary, decimal
+ * or CIDR notation.
  *
  * ISC masterrace - look at ./LICENSE
  *
@@ -60,21 +60,23 @@ int bin(char *nm) {
 	int out;
 	int cnt;
 
-	for (i = 0, out = 0, cnt = 0; i < 36; i++) {
-		if (nm[i] == '\0') { cnt++; break; }
+	for (i = 0, out = 0, cnt = 1; i < 35; i++) {
+
+		/* error handling */
 		if (nm[i] != '1' && nm[i] != '0' && nm[i] != '.') {
 			puts("Stop right there criminal scum!");
 			return -1;
-		}
-		if (nm[i] == '.') cnt++;
-		if (nm[i] == '1') out++;
-		if ((nm[i+1] == '1' && nm[i] == '.' && nm[i-1] == '0') ||
-		(nm[i+1] == '1' && nm[i] == '0')) {
+		} else if ((nm[i+1] == '1' && nm[i] == '.' && nm[i-1] == '0')
+			|| (nm[i+1] == '1' && nm[i] == '0')) {
 			puts("Invalid netmask; a one followed a zero");
 			return -1;
 		}
+
+		/* actual calculation */
+		if (nm[i] == '.') cnt++;
+		if (nm[i] == '1') out++;
 	}
-	if (cnt != 4) {
+	if (cnt != 4 || i > 34) {
 		puts("Invalid netmask; not enough values");
 		return -1;
 	}
@@ -113,8 +115,8 @@ int dec(char *nm) {
 		}
 	}
 
-	sprintf(nm, "%08i.%08i.%08i.%08i", to2(out[0]), to2(out[1]), to2(out[2])
-			, to2(out[3]));
+	sprintf(nm, "%08i.%08i.%08i.%08i", to2(out[0]), to2(out[1]),
+			to2(out[2]), to2(out[3]));
 	puts(nm);
 
 	return bin(nm);
@@ -125,17 +127,24 @@ int main(int argc, char **argv) {
 	int i;
 	char *mode;
 	char *nmask;
-	int cidr = 0;
+	int cidr;
 
+	/* initialisations */
+	i = 0;
 	mode = argv[1];
 	nmask = argv[2];
 
+	/* pick which base/style number is presented in */
 	if (mode[0] != '-') return -1;
 	if (mode[1] == 'b') { i = 1;
 	} else if (mode[1] == 'd') { i = 2;
 	} else if (mode[1] == 'c') { i = 3; }
 
+	/* act accordingly given previous code */
 	switch (i) {
+		case 0:
+			cidr = 0;
+			break;
 		case 1:
 			cidr = bin(nmask);
 			break;
@@ -145,14 +154,10 @@ int main(int argc, char **argv) {
 		case 3:
 			cidr = atoi(nmask);
 			break;
-		default:
-			cidr = 0;
-			break;
 	}
 
-	if (cidr > 0) printf("%i\n", cidr);
-
-	if (cidr < 1) { return -1;
+	if (cidr > 0) { printf("%i\n", cidr);
+	} else if (cidr < 1) { return -1;
 	} else if (cidr == 0) puts("Nothing happened.");
 	return 0;
 }
